@@ -31,7 +31,7 @@ export default class UserInput extends Component {
           placeholder="What needs to be done?"
           style={{ width: 300 }}
         />
-        <Button type="submit">Add task</Button>
+        <button type="submit">Add task</button>
       </form>
     );
   }

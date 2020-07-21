@@ -21,8 +21,8 @@ class App extends React.Component {
     });
   }
 
-  cancelDone(item) {
-    console.log(item);
+  updateTodoItem(id, todo) {
+    console.log(id, todo);
   }
 
   render() {
@@ -33,8 +33,11 @@ class App extends React.Component {
     return (
       <div className="App">
         <UserInput onNewToDO={(newTodo) => this.handleOnNewTodo(newTodo)} />
-        <TodoListItem todoList={todoList} />
-        <DoneListItem cancelDone={this.cancelDone} />
+        <TodoListItem
+          todoList={todoList}
+          updateTodoItem={this.updateTodoItem}
+        />
+        <DoneListItem updateTodoItem={this.updateTodoItem} />
       </div>
     );
   }
