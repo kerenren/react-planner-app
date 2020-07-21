@@ -1,25 +1,34 @@
 import React from "react";
-import logo from "./logo.svg";
 import "./App.css";
 import UserInput from "./components/UserInput.jsx";
+import TodoListItem from "./components/TodoList/TodoListItem";
+import "antd/dist/antd.css";
 
 class App extends React.Component {
-  state = {
-    toDos: [],
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      toDos: [],
+    };
+  }
 
-  handleOnNewTodo(newTOdo){
-    this.setState((state)=>{
+  handleOnNewTodo(newTOdo) {
+    this.setState((state) => {
       return {
-        toDos: [newTOdo, ...state.toDos]
-      }
-    })
+        toDos: [newTOdo, ...state.toDos],
+      };
+    });
   }
 
   render() {
+    let todoList = [];
+    this.state.toDos.forEach((dict) => {
+      todoList.push(dict["toDoTask"]);
+    });
     return (
       <div className="App">
         <UserInput onNewToDO={(newTodo) => this.handleOnNewTodo(newTodo)} />
+        <TodoListItem todoList={todoList} />
       </div>
     );
   }
