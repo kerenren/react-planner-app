@@ -4,13 +4,16 @@ export default class UserInput extends Component {
   constructor(props) {
     super(props);
     this.state = {
-        toDoTask: "",
+      toDoTask: "",
     };
   }
 
   handleSubmit(event) {
     event.preventDefault();
     this.props.onNewToDO(this.state);
+    this.setState({
+        toDoTask: ""
+    })
   }
 
   render() {
@@ -23,10 +26,13 @@ export default class UserInput extends Component {
             name="toDoTask"
             id="toDoTask"
             value={this.state.toDoTask}
-            onChange={(event) => this.setState({ toDoTask: event.target.value })}
+            onChange={(event) =>
+              this.setState({ toDoTask: event.target.value })
+            }
+            required
           />
+          <button type="submit">+</button>
         </div>
-        <button type="submit">Add new to do task</button>
       </form>
     );
   }
