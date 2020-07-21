@@ -20,6 +20,10 @@ class App extends React.Component {
     });
   }
 
+  updateTodoItem(id, todo) {
+    console.log(id,todo);
+  }
+
   render() {
     let todoList = [];
     this.state.toDos.forEach((dict) => {
@@ -28,7 +32,10 @@ class App extends React.Component {
     return (
       <div className="App">
         <UserInput onNewToDO={(newTodo) => this.handleOnNewTodo(newTodo)} />
-        <TodoListItem todoList={todoList} />
+        <TodoListItem
+          todoList={todoList}
+          updateTodoItem={this.updateTodoItem}
+        />
       </div>
     );
   }
