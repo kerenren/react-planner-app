@@ -1,11 +1,8 @@
 import React from "react";
-import { List, Checkbox, Input, Typography, Divider } from "antd";
+import { List, Divider } from "antd";
 
 
 function TodoListItem(props) {
-  // const data = props.todoList;
-
-  
 
   return (
     <div>

@@ -65,9 +65,6 @@ class App extends React.Component {
       id: item.id,
     };
 
-    // console.log(itemStatus.finished);
-    // console.log(typeof itemStatus === "undefined");
-
     return itemStatus;
   }
 
@@ -82,20 +79,14 @@ class App extends React.Component {
 
   render() {
     const handleToggle = this.handleToggle;
-    // let todoList = [...this.state.toDos];
 
-    // {
-    //   console.log(Array.isArray(todoList));
-    //   console.log(typeof todoList);
-    // }
     let listItem = this.state.toDos.map(function (item) {
       return (
         <List.Item key={item["id"]}>
           <Checkbox
             onChange={() => handleToggle(item)}
-            // checked={item.finished}
             defaultChecked={item.finished}
-            // value={item.finished}
+            value={item.finished}
           />
 
           {"  item id:" + item["id"]}
@@ -120,7 +111,6 @@ class App extends React.Component {
       <div className="App">
         <UserInput onNewToDO={(newTodo) => this.handleOnNewTodo(newTodo)} />
         <TodoListItem
-          // todoList={todoList}
           updateTodoItem={this.updateTodoItem}
           listItem={listItem}
         />

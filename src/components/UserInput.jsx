@@ -27,16 +27,9 @@ export default class UserInput extends Component {
     });
   }
 
-  // componentDidMount() {
-  //   this.setState({
-  //     id: (this.state.id += 1),
-  //   });
-  // }
-
   render() {
     return (
       <form onSubmit={(event) => this.handleSubmit(event)}>
-        {/* <label htmlFor="toDoTask">Add new to do list</label> */}
         <Input
           type="text"
           name="toDoTask"
