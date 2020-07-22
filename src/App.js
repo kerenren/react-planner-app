@@ -25,6 +25,17 @@ class App extends React.Component {
     this.handleToggle = this.handleToggle.bind(this);
   }
 
+  handleSort() {
+    console.log("before", this.state);
+    this.setState((state) => {
+      return {
+        toDos: state.toDos.sort((x, y) => x.id - y.id),
+        dones: state.dones.sort((x, y) => x.id - y.id),
+      };
+    });
+    console.log("after", this.state);
+  }
+
   handleOnNewTodo(newTOdo, oldDone) {
     if (typeof oldDone === "undefined") {
       this.setState((state) => {
@@ -36,26 +47,21 @@ class App extends React.Component {
       this.setState((state) => {
         return {
           toDos: [newTOdo, ...state.toDos],
-          dones: [...state.dones].filter(
-            (item) => item.toDoTask != oldDone.toDoTask
-          ),
+          dones: [...state.dones].filter((item) => item.id !== oldDone.id),
         };
       });
     }
+    this.handleSort();
   }
 
   handleOnNewDone(newDone, oldTodo) {
-    console.log("new one", newDone);
-    console.log("old todo", oldTodo);
     this.setState((state) => {
       return {
-        toDos: [...state.toDos].filter(
-          (item) => item.toDoTask != oldTodo.toDoTask
-        ),
+        toDos: [...state.toDos].filter((item) => item.id !== oldTodo.id),
         dones: [newDone, ...state.dones],
       };
     });
-    console.log(this.state);
+    this.handleSort();
   }
 
   toggleTodoItem(item) {
@@ -69,9 +75,7 @@ class App extends React.Component {
   }
 
   handleToggle(item) {
-    console.log("old item", item);
     let newItem = this.toggleTodoItem(item);
-    console.log("new item", newItem);
     newItem.finished
       ? this.handleOnNewDone(newItem, item)
       : this.handleOnNewTodo(newItem, item);
@@ -87,7 +91,6 @@ class App extends React.Component {
             <Checkbox
               onChange={() => handleToggle(item)}
               defaultChecked={item.finished}
-              value={item.finished}
             />
 
             {"  item id:" + item["id"]}
