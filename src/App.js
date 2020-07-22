@@ -23,17 +23,16 @@ class App extends React.Component {
     };
     this.toggleTodoItem = this.toggleTodoItem.bind(this);
     this.handleToggle = this.handleToggle.bind(this);
+    this.removeTodoItem = this.removeTodoItem.bind(this);
   }
 
   handleSort() {
-    console.log("before", this.state);
     this.setState((state) => {
       return {
         toDos: state.toDos.sort((x, y) => x.id - y.id),
         dones: state.dones.sort((x, y) => x.id - y.id),
       };
     });
-    console.log("after", this.state);
   }
 
   handleOnNewTodo(newTOdo, oldDone) {
@@ -81,8 +80,18 @@ class App extends React.Component {
       : this.handleOnNewTodo(newItem, item);
   }
 
+  removeTodoItem(itemId) {
+    this.setState((state) => {
+      return {
+        toDos: state.toDos.filter((item) => item.id !== itemId),
+        dones: state.dones.filter((item) => item.id !== itemId),
+      };
+    });
+  }
+
   render() {
     const handleToggle = this.handleToggle;
+    const removeTodoItem = this.removeTodoItem;
 
     function listItem(list) {
       const listElement = list.map(function (item) {
@@ -104,7 +113,7 @@ class App extends React.Component {
             <DeleteOutlined
               type="close-circle"
               theme="filled"
-              // onClick={() => removeTodoItem(item.id)}
+              onClick={() => removeTodoItem(item.id)}
             />
             <StarOutlined />
           </List.Item>
