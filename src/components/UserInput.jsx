@@ -6,6 +6,8 @@ export default class UserInput extends Component {
     super(props);
     this.state = {
       toDoTask: "",
+      id: 0,
+      finished: false,
     };
   }
 
@@ -14,8 +16,22 @@ export default class UserInput extends Component {
     this.props.onNewToDO(this.state);
     this.setState({
       toDoTask: "",
+      id: (this.state.id += 1),
+      finished: false,
     });
   }
+
+  hadleInput(event) {
+    this.setState({
+      toDoTask: event.target.value,
+    });
+  }
+
+  // componentDidMount() {
+  //   this.setState({
+  //     id: (this.state.id += 1),
+  //   });
+  // }
 
   render() {
     return (
@@ -26,7 +42,7 @@ export default class UserInput extends Component {
           name="toDoTask"
           id="toDoTask"
           value={this.state.toDoTask}
-          onChange={(event) => this.setState({ toDoTask: event.target.value })}
+          onChange={(event) => this.hadleInput(event)}
           required
           placeholder="What needs to be done?"
           style={{ width: 300 }}
