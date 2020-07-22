@@ -80,41 +80,44 @@ class App extends React.Component {
   render() {
     const handleToggle = this.handleToggle;
 
-    let listItem = this.state.toDos.map(function (item) {
-      return (
-        <List.Item key={item["id"]}>
-          <Checkbox
-            onChange={() => handleToggle(item)}
-            defaultChecked={item.finished}
-            value={item.finished}
-          />
+    function listItem(list) {
+      const listElement = list.map(function (item) {
+        return (
+          <List.Item key={item["id"]}>
+            <Checkbox
+              onChange={() => handleToggle(item)}
+              defaultChecked={item.finished}
+              value={item.finished}
+            />
 
-          {"  item id:" + item["id"]}
-          {item["toDoTask"]}
+            {"  item id:" + item["id"]}
+            {item["toDoTask"]}
 
-          <EditOutlined
-            type="edit"
-            theme="filled"
-            // onClick={this.toggleEditing}
-          />
-          <DeleteOutlined
-            type="close-circle"
-            theme="filled"
-            // onClick={() => removeTodoItem(item.id)}
-          />
-          <StarOutlined />
-        </List.Item>
-      );
-    });
+            <EditOutlined
+              type="edit"
+              theme="filled"
+              // onClick={this.toggleEditing}
+            />
+            <DeleteOutlined
+              type="close-circle"
+              theme="filled"
+              // onClick={() => removeTodoItem(item.id)}
+            />
+            <StarOutlined />
+          </List.Item>
+        );
+      });
+      return listElement;
+    }
 
     return (
       <div className="App">
         <UserInput onNewToDO={(newTodo) => this.handleOnNewTodo(newTodo)} />
         <TodoListItem
           updateTodoItem={this.updateTodoItem}
-          listItem={listItem}
+          listItem={listItem(this.state.toDos)}
         />
-        <DoneListItem updateTodoItem={this.updateTodoItem} />
+        <DoneListItem listItem={listItem(this.state.dones)} />
       </div>
     );
   }
