@@ -8,6 +8,7 @@ export default class UserInput extends Component {
       toDoTask: "",
       id: 0,
       finished: false,
+      isFavorite: false,
     };
   }
 
@@ -18,6 +19,7 @@ export default class UserInput extends Component {
       toDoTask: "",
       id: (this.state.id += 1),
       finished: false,
+      isFavorite: false,
     });
   }
 
