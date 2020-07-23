@@ -24,7 +24,7 @@ function Task(props) {
           disabled={!item.isEditing}
           value={item.toDoTask}
           onKeyUp={(e) => props.handleKeyUp(e, item)}
-          onChange={(e) => props.handleEdit(e)}
+          onChange={(e) => props.handleEdit(e,item)}
         />
 
         <EditTwoTone

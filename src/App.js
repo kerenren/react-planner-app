@@ -4,7 +4,7 @@ import UserInput from "./components/UserInput.jsx";
 import "antd/dist/antd.css";
 import Task from "./components/Task";
 import { Divider, List } from "antd";
-import { Typography } from 'antd';
+import { Typography } from "antd";
 
 const { Title } = Typography;
 
@@ -101,24 +101,39 @@ class App extends React.Component {
         taskList: [editItem, ...filteredList],
       };
     });
-    return editItem;
   }
 
   handleKeyUp(e, item) {
-    const inputText = this.handleEdit(e);
-    let editItem = this.toggleEditing(item);
-    if (e.key === "Escape") {
-      e.target.value = editItem.toDoTask;
-    }
-    if (e.key === "Enter") {
-      e.target.value = inputText;
-      e.target.disabled = true;
-    }
+    const taskList = this.state.taskList;
+    taskList.map((task) => {
+      if (task.id === item.id) {
+        if (e.key === "Enter") {
+          task.toDoTask = e.target.value;
+          task.isEditing = !task.isEditing;
+        }
+        if (e.key === "Escape") {
+          task.isEditing = !task.isEditing;
+        }
+      }
+    });
+    console.log(item.toDoTask);
+    this.setState({
+      taskList: taskList,
+    });
   }
 
-  handleEdit(e) {
+  handleEdit(e, item) {
     e.target.focus();
-    return e.target.value;
+    const taskList = this.state.taskList;
+    taskList.map((task) => {
+      if (task.id === item.id) {
+        task.toDoTask = e.target.value;
+      }
+    });
+
+    this.setState({
+      taskList: taskList,
+    });
   }
 
   render() {
@@ -137,7 +152,7 @@ class App extends React.Component {
         <Title>Kelly's to do app</Title>
         <UserInput onNewToDO={(newTodo) => this.onNewToDO(newTodo)} />
         <Divider orientation="left">To Do List</Divider>
-        <List bordered >
+        <List bordered>
           {handleSort(this.state.taskList)}
           {this.state.taskList.map((item) => {
             if (!item.finished) {
@@ -179,9 +194,12 @@ class App extends React.Component {
             }
           })}
         </List>
-       
+
         <Divider orientation="left">Done</Divider>
-        <List bordered footer={"© 2020 Kelly.  Pwoered by ITC. All rights reserved."}>
+        <List
+          bordered
+          footer={"© 2020 Kelly.  Pwoered by ITC. All rights reserved."}
+        >
           {this.state.taskList.map((item) => {
             if (item.finished) {
               if (item.isFavorite) {
