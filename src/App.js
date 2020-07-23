@@ -4,7 +4,7 @@ import UserInput from "./components/UserInput.jsx";
 import TodoListItem from "./components/TodoList/TodoListItem";
 import "antd/dist/antd.css";
 import DoneListItem from "./components/DoneList/DoneListItem";
-import { List, Checkbox } from "antd";
+import { List, Checkbox, Divider } from "antd";
 import {
   CheckCircleOutlined,
   EditTwoTone,
@@ -48,23 +48,41 @@ class App extends React.Component {
         };
       });
     } else {
-      this.setState((state) => {
-        return {
-          toDos: [newTOdo, ...state.toDos],
-          dones: [...state.dones].filter((item) => item.id !== oldDone.id),
-        };
-      });
+      newTOdo.isFavorite
+        ? this.setState((state) => {
+            return {
+              toDoFavorites: [newTOdo, ...state.toDoFavorites],
+              doneFavorites: [...state.doneFavorites].filter(
+                (item) => item.id !== oldDone.id
+              ),
+            };
+          })
+        : this.setState((state) => {
+            return {
+              toDos: [newTOdo, ...state.toDos],
+              dones: [...state.dones].filter((item) => item.id !== oldDone.id),
+            };
+          });
     }
     this.handleSort();
   }
 
   handleOnNewDone(newDone, oldTodo) {
-    this.setState((state) => {
-      return {
-        toDos: [...state.toDos].filter((item) => item.id !== oldTodo.id),
-        dones: [newDone, ...state.dones],
-      };
-    });
+    newDone.isFavorite
+      ? this.setState((state) => {
+          return {
+            toDoFavorites: [...state.toDoFavorites].filter(
+              (item) => item.id !== oldTodo.id
+            ),
+            doneFavorites: [newDone, ...state.doneFavorites],
+          };
+        })
+      : this.setState((state) => {
+          return {
+            toDos: [...state.toDos].filter((item) => item.id !== oldTodo.id),
+            dones: [newDone, ...state.dones],
+          };
+        });
     this.handleSort();
   }
 
@@ -104,17 +122,35 @@ class App extends React.Component {
       id: item.id,
       isFavorite: !item.isFavorite,
     };
-    favoriteItem.finished
+    favoriteItem.isFavorite
+      ? favoriteItem.finished
+        ? this.setState((state) => {
+            return {
+              doneFavorites: [favoriteItem, ...state.doneFavorites],
+              dones: state.dones.filter((item) => item.id !== favoriteItem.id),
+            };
+          })
+        : this.setState((state) => {
+            return {
+              toDoFavorites: [favoriteItem, ...state.toDoFavorites],
+              toDos: state.toDos.filter((item) => item.id !== favoriteItem.id),
+            };
+          })
+      : favoriteItem.finished
       ? this.setState((state) => {
           return {
-            doneFavorites: [favoriteItem, ...state.doneFavorites],
-            dones: state.dones.filter((item) => item.id !== favoriteItem.id),
+            dones: [favoriteItem, ...state.dones],
+            doneFavorites: state.doneFavorites.filter(
+              (item) => item.id !== favoriteItem.id
+            ),
           };
         })
       : this.setState((state) => {
           return {
-            toDoFavorites: [favoriteItem, ...state.toDoFavorites],
-            toDos: state.toDos.filter((item) => item.id !== favoriteItem.id),
+            toDos: [favoriteItem, ...state.toDos],
+            toDoFavorites: state.toDoFavorites.filter(
+              (item) => item.id !== favoriteItem.id
+            ),
           };
         });
     this.handleSort();
@@ -161,8 +197,10 @@ class App extends React.Component {
     return (
       <div className="App">
         <UserInput onNewToDO={(newTodo) => this.handleOnNewTodo(newTodo)} />
+        <Divider orientation="left">To Do List</Divider>
         <TodoListItem listItem={listItem(this.state.toDoFavorites)} />
         <TodoListItem listItem={listItem(this.state.toDos)} />
+        <Divider orientation="left">Done</Divider>
         <DoneListItem listItem={listItem(this.state.doneFavorites)} />
         <DoneListItem listItem={listItem(this.state.dones)} />
       </div>
