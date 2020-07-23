@@ -4,7 +4,7 @@ import UserInput from "./components/UserInput.jsx";
 import TodoListItem from "./components/TodoList/TodoListItem";
 import "antd/dist/antd.css";
 import DoneListItem from "./components/DoneList/DoneListItem";
-import { List, Checkbox, Divider } from "antd";
+import { List, Checkbox, Divider, Input } from "antd";
 import {
   CheckCircleOutlined,
   EditTwoTone,
@@ -27,6 +27,7 @@ class App extends React.Component {
     this.handleToggle = this.handleToggle.bind(this);
     this.removeTodoItem = this.removeTodoItem.bind(this);
     this.toggleIsFavorite = this.toggleIsFavorite.bind(this);
+    this.toggleEditing = this.toggleEditing.bind(this);
   }
 
   handleSort() {
@@ -92,6 +93,7 @@ class App extends React.Component {
       finished: !item.finished,
       id: item.id,
       isFavorite: item.isFavorite,
+      isEditing: item.isEditing,
     };
 
     return itemStatus;
@@ -121,6 +123,7 @@ class App extends React.Component {
       finished: item.finished,
       id: item.id,
       isFavorite: !item.isFavorite,
+      isEditing: item.isEditing,
     };
     favoriteItem.isFavorite
       ? favoriteItem.finished
@@ -156,10 +159,60 @@ class App extends React.Component {
     this.handleSort();
   }
 
+  toggleEditing(item) {
+    const editItem = {
+      toDoTask: item.toDoTask,
+      toDoTask: item.toDoTask,
+      finished: item.finished,
+      id: item.id,
+      isFavorite: item.isFavorite,
+      isEditing: !item.isEditing,
+    };
+    switch (editItem.isFavorite) {
+      case true:
+        editItem.finished
+          ? this.setState((state) => {
+              return {
+                doneFavorites: state.doneFavorites.filter(
+                  (item) => item.id !== editItem.id
+                ),
+                doneFavorites: [editItem, ...state.doneFavorites],
+              };
+            })
+          : this.setState((state) => {
+              return {
+                toDoFavorites: state.toDoFavorites.filter(
+                  (item) => item.id !== editItem.id
+                ),
+                toDoFavorites: [editItem, ...state.toDoFavorites],
+              };
+            });
+        break;
+      case false:
+        editItem.finished
+          ? this.setState((state) => {
+              return {
+                dones: state.dones.filter((item) => item.id !== editItem.id),
+                dones: [editItem, ...state.dones],
+              };
+            })
+          : this.setState((state) => {
+              filteredToDos = state.toDos.filter(
+                (item) => item.id !== editItem.id
+              );
+              return {
+                toDos: [editItem, ...filteredToDos],
+              };
+            });
+        break;
+    }
+  }
+
   render() {
     const handleToggle = this.handleToggle;
     const removeTodoItem = this.removeTodoItem;
     const toggleIsFavorite = this.toggleIsFavorite;
+    const toggleEditing = this.toggleEditing;
 
     function listItem(list) {
       const listElement = list.map(function (item) {
@@ -169,14 +222,16 @@ class App extends React.Component {
               onChange={() => handleToggle(item)}
               defaultChecked={item.finished}
             />
-
-            {"  item id:" + item["id"]}
-            {item["toDoTask"]}
+            <Input
+              type="text"
+              disabled={!item.isEditing}
+              value={item["toDoTask"]}
+            />
 
             <EditTwoTone
               type="edit"
               theme="filled"
-              // onClick={this.toggleEditing}
+              onClick={() => toggleEditing(item)}
             />
             <DeleteTwoTone
               type="close-circle"

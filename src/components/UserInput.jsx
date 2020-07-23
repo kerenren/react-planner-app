@@ -20,6 +20,7 @@ export default class UserInput extends Component {
       id: (this.state.id += 1),
       finished: false,
       isFavorite: false,
+      isEditing: false,
     });
   }
 
