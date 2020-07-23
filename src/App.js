@@ -1,9 +1,8 @@
 import React from "react";
 import "./App.css";
 import UserInput from "./components/UserInput.jsx";
-import TodoListItem from "./components/TodoList/TodoListItem";
 import "antd/dist/antd.css";
-import DoneListItem from "./components/DoneList/DoneListItem";
+import UserForm from "./components/UserForm";
 import { List, Checkbox, Divider, Input } from "antd";
 import {
   CheckCircleOutlined,
@@ -18,73 +17,28 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      toDoFavorites: [],
-      toDos: [],
-      doneFavorites: [],
-      dones: [],
+      taskList: [],
     };
     this.toggleTodoItem = this.toggleTodoItem.bind(this);
     this.handleToggle = this.handleToggle.bind(this);
     this.removeTodoItem = this.removeTodoItem.bind(this);
     this.toggleIsFavorite = this.toggleIsFavorite.bind(this);
     this.toggleEditing = this.toggleEditing.bind(this);
+    this.handleKeyUp = this.handleKeyUp.bind(this);
+    this.handleEdit = this.handleEdit.bind(this);
+    this.handleSort = this.handleSort.bind(this);
   }
 
-  handleSort() {
+  handleSort(list) {
+    list.sort((x, y) => x.id - y.id);
+  }
+
+  onNewToDO(newTOdo) {
     this.setState((state) => {
       return {
-        toDoFavorites: state.toDoFavorites.sort((x, y) => x.id - y.id),
-        toDos: state.toDos.sort((x, y) => x.id - y.id),
-        doneFavorites: state.doneFavorites.sort((x, y) => x.id - y.id),
-        dones: state.dones.sort((x, y) => x.id - y.id),
+        taskList: [newTOdo, ...state.taskList],
       };
     });
-  }
-
-  handleOnNewTodo(newTOdo, oldDone) {
-    if (typeof oldDone === "undefined") {
-      this.setState((state) => {
-        return {
-          toDos: [newTOdo, ...state.toDos],
-        };
-      });
-    } else {
-      newTOdo.isFavorite
-        ? this.setState((state) => {
-            return {
-              toDoFavorites: [newTOdo, ...state.toDoFavorites],
-              doneFavorites: [...state.doneFavorites].filter(
-                (item) => item.id !== oldDone.id
-              ),
-            };
-          })
-        : this.setState((state) => {
-            return {
-              toDos: [newTOdo, ...state.toDos],
-              dones: [...state.dones].filter((item) => item.id !== oldDone.id),
-            };
-          });
-    }
-    this.handleSort();
-  }
-
-  handleOnNewDone(newDone, oldTodo) {
-    newDone.isFavorite
-      ? this.setState((state) => {
-          return {
-            toDoFavorites: [...state.toDoFavorites].filter(
-              (item) => item.id !== oldTodo.id
-            ),
-            doneFavorites: [newDone, ...state.doneFavorites],
-          };
-        })
-      : this.setState((state) => {
-          return {
-            toDos: [...state.toDos].filter((item) => item.id !== oldTodo.id),
-            dones: [newDone, ...state.dones],
-          };
-        });
-    this.handleSort();
   }
 
   toggleTodoItem(item) {
@@ -95,24 +49,25 @@ class App extends React.Component {
       isFavorite: item.isFavorite,
       isEditing: item.isEditing,
     };
-
     return itemStatus;
   }
 
   handleToggle(item) {
     let newItem = this.toggleTodoItem(item);
-    newItem.finished
-      ? this.handleOnNewDone(newItem, item)
-      : this.handleOnNewTodo(newItem, item);
+    this.setState((state) => {
+      const filtedTaskList = state.taskList.filter(
+        (task) => task.id !== newItem.id
+      );
+      return {
+        taskList: [newItem, ...filtedTaskList],
+      };
+    });
   }
 
   removeTodoItem(itemId) {
     this.setState((state) => {
       return {
-        toDoFavorites: state.toDoFavorites.filter((item) => item.id !== itemId),
-        toDos: state.toDos.filter((item) => item.id !== itemId),
-        dones: state.dones.filter((item) => item.id !== itemId),
-        doneFavorites: state.doneFavorites.filter((item) => item.id !== itemId),
+        taskList: state.taskList.filter((item) => item.id !== itemId),
       };
     });
   }
@@ -125,38 +80,14 @@ class App extends React.Component {
       isFavorite: !item.isFavorite,
       isEditing: item.isEditing,
     };
-    favoriteItem.isFavorite
-      ? favoriteItem.finished
-        ? this.setState((state) => {
-            return {
-              doneFavorites: [favoriteItem, ...state.doneFavorites],
-              dones: state.dones.filter((item) => item.id !== favoriteItem.id),
-            };
-          })
-        : this.setState((state) => {
-            return {
-              toDoFavorites: [favoriteItem, ...state.toDoFavorites],
-              toDos: state.toDos.filter((item) => item.id !== favoriteItem.id),
-            };
-          })
-      : favoriteItem.finished
-      ? this.setState((state) => {
-          return {
-            dones: [favoriteItem, ...state.dones],
-            doneFavorites: state.doneFavorites.filter(
-              (item) => item.id !== favoriteItem.id
-            ),
-          };
-        })
-      : this.setState((state) => {
-          return {
-            toDos: [favoriteItem, ...state.toDos],
-            toDoFavorites: state.toDoFavorites.filter(
-              (item) => item.id !== favoriteItem.id
-            ),
-          };
-        });
-    this.handleSort();
+    this.setState((state) => {
+      const filteredList = state.taskList.filter(
+        (item) => item.id !== favoriteItem.id
+      );
+      return {
+        taskList: [favoriteItem, ...filteredList],
+      };
+    });
   }
 
   toggleEditing(item) {
@@ -168,96 +99,125 @@ class App extends React.Component {
       isFavorite: item.isFavorite,
       isEditing: !item.isEditing,
     };
-    switch (editItem.isFavorite) {
-      case true:
-        editItem.finished
-          ? this.setState((state) => {
-              return {
-                doneFavorites: state.doneFavorites.filter(
-                  (item) => item.id !== editItem.id
-                ),
-                doneFavorites: [editItem, ...state.doneFavorites],
-              };
-            })
-          : this.setState((state) => {
-              return {
-                toDoFavorites: state.toDoFavorites.filter(
-                  (item) => item.id !== editItem.id
-                ),
-                toDoFavorites: [editItem, ...state.toDoFavorites],
-              };
-            });
-        break;
-      case false:
-        editItem.finished
-          ? this.setState((state) => {
-              return {
-                dones: state.dones.filter((item) => item.id !== editItem.id),
-                dones: [editItem, ...state.dones],
-              };
-            })
-          : this.setState((state) => {
-              filteredToDos = state.toDos.filter(
-                (item) => item.id !== editItem.id
-              );
-              return {
-                toDos: [editItem, ...filteredToDos],
-              };
-            });
-        break;
+    this.setState((state) => {
+      const filteredList = state.taskList.filter(
+        (item) => item.id !== editItem.id
+      );
+      return {
+        taskList: [editItem, ...filteredList],
+      };
+    });
+    return editItem;
+  }
+
+  handleKeyUp(e, item) {
+    const inputText = this.handleEdit(e);
+    let editItem = this.toggleEditing(item);
+    if (e.key === "Escape") {
+      e.target.value = editItem.toDoTask;
+    }
+    if (e.key === "Enter") {
+      e.target.value = inputText;
+      e.target.disabled = true;
     }
   }
 
+  handleEdit(e) {
+    e.target.focus();
+    return e.target.value;
+  }
+
   render() {
-    const handleToggle = this.handleToggle;
-    const removeTodoItem = this.removeTodoItem;
-    const toggleIsFavorite = this.toggleIsFavorite;
-    const toggleEditing = this.toggleEditing;
+    const {
+      handleToggle,
+      removeTodoItem,
+      toggleIsFavorite,
+      toggleEditing,
+      handleKeyUp,
+      handleEdit,
+    } = this;
 
     function listItem(list) {
-      const listElement = list.map(function (item) {
-        return (
-          <List.Item key={item["id"]}>
-            <Checkbox
-              onChange={() => handleToggle(item)}
-              defaultChecked={item.finished}
-            />
-            <Input
-              type="text"
-              disabled={!item.isEditing}
-              value={item["toDoTask"]}
-            />
+      if (list.length >= 1) {
+        const listElement = list.map(function (item) {
+          return (
+            <List.Item key={item["id"]}>
+              <Checkbox
+                onChange={() => handleToggle(item)}
+                defaultChecked={item.finished}
+              />
+              <Input
+                type="text"
+                disabled={!item.isEditing}
+                value={item.toDoTask}
+                onKeyUp={(e) => handleKeyUp(e, item)}
+                onChange={(e) => handleEdit(e)}
+              />
 
-            <EditTwoTone
-              type="edit"
-              theme="filled"
-              onClick={() => toggleEditing(item)}
-            />
-            <DeleteTwoTone
-              type="close-circle"
-              theme="filled"
-              onClick={() => removeTodoItem(item.id)}
-            />
-            {item.isFavorite ? (
-              <StarFilled onClick={() => toggleIsFavorite(item)} />
-            ) : (
-              <StarTwoTone onClick={() => toggleIsFavorite(item)} />
-            )}
-          </List.Item>
-        );
-      });
-      return listElement;
+              <EditTwoTone
+                type="edit"
+                theme="filled"
+                onClick={() => toggleEditing(item)}
+              />
+              <DeleteTwoTone
+                type="close-circle"
+                theme="filled"
+                onClick={() => removeTodoItem(item.id)}
+              />
+              {item.isFavorite ? (
+                <StarFilled onClick={() => toggleIsFavorite(item)} />
+              ) : (
+                <StarTwoTone onClick={() => toggleIsFavorite(item)} />
+              )}
+            </List.Item>
+          );
+        });
+        return listElement;
+      }
     }
 
     return (
       <div className="App">
-        <UserInput onNewToDO={(newTodo) => this.handleOnNewTodo(newTodo)} />
+        <UserInput onNewToDO={(newTodo) => this.onNewToDO(newTodo)} />
         <Divider orientation="left">To Do List</Divider>
-        <TodoListItem listItem={listItem(this.state.toDoFavorites)} />
-        <TodoListItem listItem={listItem(this.state.toDos)} />
+        {this.state.taskList.map((item) => {
+          if (!item.finished) {
+            if (item.isFavorite) {
+              const toDoFavorites = [];
+              toDoFavorites.push(item);
+              return <UserForm listItem={listItem(toDoFavorites)} />;
+            }
+          }
+        })}
+        {this.state.taskList.map((item) => {
+          if (!item.finished) {
+            if (!item.isFavorite) {
+              const toDoUnFavorites = [];
+              toDoUnFavorites.push(item);
+              return <UserForm listItem={listItem(toDoUnFavorites)} />;
+            }
+          }
+        })}
+
         <Divider orientation="left">Done</Divider>
-        <DoneListItem listItem={listItem(this.state.doneFavorites)} />
-        <DoneListItem listItem={listItem(this.state.dones)} />
+        {this.state.taskList.map((item) => {
+          if (item.finished) {
+            if (item.isFavorite) {
+              const DoneFavorites = [];
+              DoneFavorites.push(item);
+              return <UserForm listItem={listItem(DoneFavorites)} />;
+            }
+          }
+        })}
+        {this.state.taskList.map((item) => {
+          if (item.finished) {
+            if (!item.isFavorite) {
+              const DoneUnFavorites = [];
+              DoneUnFavorites.push(item);
+              return <UserForm listItem={listItem(DoneUnFavorites)} />;
+            }
+          }
+        })}
       </div>
     );
   }

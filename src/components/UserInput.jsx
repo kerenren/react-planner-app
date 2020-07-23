@@ -9,6 +9,7 @@ export default class UserInput extends Component {
       id: 0,
       finished: false,
       isFavorite: false,
+      isEditing: false,
     };
   }
 
