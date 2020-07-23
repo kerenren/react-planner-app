@@ -22,6 +22,7 @@ class App extends React.Component {
     this.handleKeyUp = this.handleKeyUp.bind(this);
     this.handleEdit = this.handleEdit.bind(this);
     this.handleSort = this.handleSort.bind(this);
+    this.onReset = this.onReset.bind(this);
   }
 
   handleSort(list) {
@@ -136,6 +137,12 @@ class App extends React.Component {
     });
   }
 
+  onReset() {
+    this.setState({
+      taskList: [],
+    });
+  }
+
   render() {
     const {
       handleToggle,
@@ -145,12 +152,17 @@ class App extends React.Component {
       handleKeyUp,
       handleEdit,
       handleSort,
+      onReset,
     } = this;
 
     return (
       <div className="App">
         <Title>Kelly's to do app</Title>
-        <UserInput onNewToDO={(newTodo) => this.onNewToDO(newTodo)} />
+        <UserInput
+          onNewToDO={(newTodo) => this.onNewToDO(newTodo)}
+          items={this.state.taskList}
+          onReset={onReset}
+        />
         <Divider orientation="left">To Do List</Divider>
         <List bordered>
           {handleSort(this.state.taskList)}

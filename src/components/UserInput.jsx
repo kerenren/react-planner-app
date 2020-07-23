@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import { Input, Button } from "antd";
+import { Input } from "antd";
+import { UndoOutlined } from "@ant-design/icons";
 
 export default class UserInput extends Component {
   constructor(props) {
@@ -45,6 +46,9 @@ export default class UserInput extends Component {
           style={{ width: 300 }}
         />
         <button type="submit">Add task</button>
+        {this.props.items.length >0 && (
+          <UndoOutlined onClick={this.props.onReset} />
+        )}
       </form>
     );
   }
