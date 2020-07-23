@@ -117,7 +117,7 @@ class App extends React.Component {
         }
       }
     });
-    console.log(item.toDoTask);
+
     this.setState({
       taskList: taskList,
     });
@@ -142,7 +142,27 @@ class App extends React.Component {
       taskList: [],
     });
   }
-
+  renderTaskView = (
+    listtype,
+    handleToggle,
+    handleKeyUp,
+    handleEdit,
+    toggleEditing,
+    removeTodoItem,
+    toggleIsFavorite
+  ) => {
+    return (
+      <Task
+        list={listtype}
+        handleToggle={handleToggle}
+        handleKeyUp={handleKeyUp}
+        handleEdit={handleEdit}
+        toggleEditing={toggleEditing}
+        removeTodoItem={removeTodoItem}
+        toggleIsFavorite={toggleIsFavorite}
+      />
+    );
+  };
   render() {
     const {
       handleToggle,
@@ -154,7 +174,14 @@ class App extends React.Component {
       handleSort,
       onReset,
     } = this;
-
+    const taskCallbacks = [
+      handleToggle,
+      handleKeyUp,
+      handleEdit,
+      toggleEditing,
+      removeTodoItem,
+      toggleIsFavorite,
+    ];
     return (
       <div className="App">
         <Title>Kelly's to do app</Title>
@@ -171,17 +198,7 @@ class App extends React.Component {
               if (item.isFavorite) {
                 const toDoFavorites = [];
                 toDoFavorites.push(item);
-                return (
-                  <Task
-                    list={toDoFavorites}
-                    handleToggle={handleToggle}
-                    handleKeyUp={handleKeyUp}
-                    handleEdit={handleEdit}
-                    toggleEditing={toggleEditing}
-                    removeTodoItem={removeTodoItem}
-                    toggleIsFavorite={toggleIsFavorite}
-                  />
-                );
+                return this.renderTaskView(toDoFavorites, ...taskCallbacks);
               }
             }
           })}
@@ -191,17 +208,7 @@ class App extends React.Component {
               if (!item.isFavorite) {
                 const toDoUnFavorites = [];
                 toDoUnFavorites.push(item);
-                return (
-                  <Task
-                    list={toDoUnFavorites}
-                    handleToggle={handleToggle}
-                    handleKeyUp={handleKeyUp}
-                    handleEdit={handleEdit}
-                    toggleEditing={toggleEditing}
-                    removeTodoItem={removeTodoItem}
-                    toggleIsFavorite={toggleIsFavorite}
-                  />
-                );
+                return this.renderTaskView(toDoUnFavorites, ...taskCallbacks);
               }
             }
           })}
@@ -217,17 +224,7 @@ class App extends React.Component {
               if (item.isFavorite) {
                 const DoneFavorites = [];
                 DoneFavorites.push(item);
-                return (
-                  <Task
-                    list={DoneFavorites}
-                    handleToggle={handleToggle}
-                    handleKeyUp={handleKeyUp}
-                    handleEdit={handleEdit}
-                    toggleEditing={toggleEditing}
-                    removeTodoItem={removeTodoItem}
-                    toggleIsFavorite={toggleIsFavorite}
-                  />
-                );
+                return this.renderTaskView(DoneFavorites, ...taskCallbacks);
               }
             }
           })}
@@ -236,17 +233,7 @@ class App extends React.Component {
               if (!item.isFavorite) {
                 const DoneUnFavorites = [];
                 DoneUnFavorites.push(item);
-                return (
-                  <Task
-                    list={DoneUnFavorites}
-                    handleToggle={handleToggle}
-                    handleKeyUp={handleKeyUp}
-                    handleEdit={handleEdit}
-                    toggleEditing={toggleEditing}
-                    removeTodoItem={removeTodoItem}
-                    toggleIsFavorite={toggleIsFavorite}
-                  />
-                );
+                return this.renderTaskView(DoneUnFavorites, ...taskCallbacks);
               }
             }
           })}
