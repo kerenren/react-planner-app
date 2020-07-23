@@ -2,16 +2,11 @@ import React from "react";
 import "./App.css";
 import UserInput from "./components/UserInput.jsx";
 import "antd/dist/antd.css";
-import UserForm from "./components/UserForm";
-import { List, Checkbox, Divider, Input } from "antd";
-import {
-  CheckCircleOutlined,
-  EditTwoTone,
-  DeleteTwoTone,
-  StarOutlined,
-  StarFilled,
-  StarTwoTone,
-} from "@ant-design/icons";
+import Task from "./components/Task";
+import { Divider, List } from "antd";
+import { Typography } from 'antd';
+
+const { Title } = Typography;
 
 class App extends React.Component {
   constructor(props) {
@@ -93,7 +88,6 @@ class App extends React.Component {
   toggleEditing(item) {
     const editItem = {
       toDoTask: item.toDoTask,
-      toDoTask: item.toDoTask,
       finished: item.finished,
       id: item.id,
       isFavorite: item.isFavorite,
@@ -135,89 +129,98 @@ class App extends React.Component {
       toggleEditing,
       handleKeyUp,
       handleEdit,
+      handleSort,
     } = this;
-
-    function listItem(list) {
-      if (list.length >= 1) {
-        const listElement = list.map(function (item) {
-          return (
-            <List.Item key={item["id"]}>
-              <Checkbox
-                onChange={() => handleToggle(item)}
-                defaultChecked={item.finished}
-              />
-              <Input
-                type="text"
-                disabled={!item.isEditing}
-                value={item.toDoTask}
-                onKeyUp={(e) => handleKeyUp(e, item)}
-                onChange={(e) => handleEdit(e)}
-              />
-
-              <EditTwoTone
-                type="edit"
-                theme="filled"
-                onClick={() => toggleEditing(item)}
-              />
-              <DeleteTwoTone
-                type="close-circle"
-                theme="filled"
-                onClick={() => removeTodoItem(item.id)}
-              />
-              {item.isFavorite ? (
-                <StarFilled onClick={() => toggleIsFavorite(item)} />
-              ) : (
-                <StarTwoTone onClick={() => toggleIsFavorite(item)} />
-              )}
-            </List.Item>
-          );
-        });
-        return listElement;
-      }
-    }
 
     return (
       <div className="App">
+        <Title>Kelly's to do app</Title>
         <UserInput onNewToDO={(newTodo) => this.onNewToDO(newTodo)} />
         <Divider orientation="left">To Do List</Divider>
-        {this.state.taskList.map((item) => {
-          if (!item.finished) {
-            if (item.isFavorite) {
-              const toDoFavorites = [];
-              toDoFavorites.push(item);
-              return <UserForm listItem={listItem(toDoFavorites)} />;
+        <List bordered >
+          {handleSort(this.state.taskList)}
+          {this.state.taskList.map((item) => {
+            if (!item.finished) {
+              if (item.isFavorite) {
+                const toDoFavorites = [];
+                toDoFavorites.push(item);
+                return (
+                  <Task
+                    list={toDoFavorites}
+                    handleToggle={handleToggle}
+                    handleKeyUp={handleKeyUp}
+                    handleEdit={handleEdit}
+                    toggleEditing={toggleEditing}
+                    removeTodoItem={removeTodoItem}
+                    toggleIsFavorite={toggleIsFavorite}
+                  />
+                );
+              }
             }
-          }
-        })}
-        {this.state.taskList.map((item) => {
-          if (!item.finished) {
-            if (!item.isFavorite) {
-              const toDoUnFavorites = [];
-              toDoUnFavorites.push(item);
-              return <UserForm listItem={listItem(toDoUnFavorites)} />;
-            }
-          }
-        })}
+          })}
 
+          {this.state.taskList.map((item) => {
+            if (!item.finished) {
+              if (!item.isFavorite) {
+                const toDoUnFavorites = [];
+                toDoUnFavorites.push(item);
+                return (
+                  <Task
+                    list={toDoUnFavorites}
+                    handleToggle={handleToggle}
+                    handleKeyUp={handleKeyUp}
+                    handleEdit={handleEdit}
+                    toggleEditing={toggleEditing}
+                    removeTodoItem={removeTodoItem}
+                    toggleIsFavorite={toggleIsFavorite}
+                  />
+                );
+              }
+            }
+          })}
+        </List>
+       
         <Divider orientation="left">Done</Divider>
-        {this.state.taskList.map((item) => {
-          if (item.finished) {
-            if (item.isFavorite) {
-              const DoneFavorites = [];
-              DoneFavorites.push(item);
-              return <UserForm listItem={listItem(DoneFavorites)} />;
+        <List bordered footer={"© 2020 Kelly.  Pwoered by ITC. All rights reserved."}>
+          {this.state.taskList.map((item) => {
+            if (item.finished) {
+              if (item.isFavorite) {
+                const DoneFavorites = [];
+                DoneFavorites.push(item);
+                return (
+                  <Task
+                    list={DoneFavorites}
+                    handleToggle={handleToggle}
+                    handleKeyUp={handleKeyUp}
+                    handleEdit={handleEdit}
+                    toggleEditing={toggleEditing}
+                    removeTodoItem={removeTodoItem}
+                    toggleIsFavorite={toggleIsFavorite}
+                  />
+                );
+              }
             }
-          }
-        })}
-        {this.state.taskList.map((item) => {
-          if (item.finished) {
-            if (!item.isFavorite) {
-              const DoneUnFavorites = [];
-              DoneUnFavorites.push(item);
-              return <UserForm listItem={listItem(DoneUnFavorites)} />;
+          })}
+          {this.state.taskList.map((item) => {
+            if (item.finished) {
+              if (!item.isFavorite) {
+                const DoneUnFavorites = [];
+                DoneUnFavorites.push(item);
+                return (
+                  <Task
+                    list={DoneUnFavorites}
+                    handleToggle={handleToggle}
+                    handleKeyUp={handleKeyUp}
+                    handleEdit={handleEdit}
+                    toggleEditing={toggleEditing}
+                    removeTodoItem={removeTodoItem}
+                    toggleIsFavorite={toggleIsFavorite}
+                  />
+                );
+              }
             }
-          }
-        })}
+          })}
+        </List>
       </div>
     );
   }

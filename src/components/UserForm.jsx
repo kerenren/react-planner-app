@@ -1,14 +1,9 @@
 import React from "react";
 import { List } from "antd";
+import Task from "./components/Task";
 
-
-function UserForm(props) { 
-
-  return (
-    <div>
-      <List bordered>{props.listItem}</List>
-    </div>
-  );
+function UserForm() {
+  return <List bordered></List>;
 }
 
 export default UserForm;
