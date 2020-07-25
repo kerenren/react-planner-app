@@ -14,15 +14,18 @@ class App extends React.Component {
     this.state = {
       taskList: [],
     };
+    this.inputElement = null;
     this.toggleTodoItem = this.toggleTodoItem.bind(this);
     this.handleToggle = this.handleToggle.bind(this);
     this.removeTodoItem = this.removeTodoItem.bind(this);
     this.toggleIsFavorite = this.toggleIsFavorite.bind(this);
     this.toggleEditing = this.toggleEditing.bind(this);
     this.handleKeyUp = this.handleKeyUp.bind(this);
-    this.handleEdit = this.handleEdit.bind(this);
     this.handleSort = this.handleSort.bind(this);
     this.onReset = this.onReset.bind(this);
+    this.focusTextInput = () => {
+      if (this.inputElement) this.inputElement.focus();
+    };
   }
 
   handleSort(list) {
@@ -109,7 +112,7 @@ class App extends React.Component {
     taskList.map((task) => {
       if (task.id === item.id) {
         if (e.key === "Enter") {
-          task.toDoTask = e.target.value;
+          task.toDoTask = this.inputElement.state.value;
           task.isEditing = !task.isEditing;
         }
         if (e.key === "Escape") {
@@ -123,43 +126,31 @@ class App extends React.Component {
     });
   }
 
-  handleEdit(e, item) {
-    e.target.focus();
-    const taskList = this.state.taskList;
-    taskList.map((task) => {
-      if (task.id === item.id) {
-        task.toDoTask = e.target.value;
-      }
-    });
-
-    this.setState({
-      taskList: taskList,
-    });
-  }
-
   onReset() {
     this.setState({
       taskList: [],
     });
   }
+
   renderTaskView = (
     listtype,
     handleToggle,
     handleKeyUp,
-    handleEdit,
     toggleEditing,
     removeTodoItem,
-    toggleIsFavorite
+    toggleIsFavorite,
+    focusTextInput
   ) => {
     return (
       <Task
         list={listtype}
         handleToggle={handleToggle}
         handleKeyUp={handleKeyUp}
-        handleEdit={handleEdit}
         toggleEditing={toggleEditing}
         removeTodoItem={removeTodoItem}
         toggleIsFavorite={toggleIsFavorite}
+        inputRef={(el) => (this.inputElement = el)}
+        focusTextInput={focusTextInput}
       />
     );
   };
@@ -170,17 +161,17 @@ class App extends React.Component {
       toggleIsFavorite,
       toggleEditing,
       handleKeyUp,
-      handleEdit,
       handleSort,
       onReset,
+      focusTextInput,
     } = this;
     const taskCallbacks = [
       handleToggle,
       handleKeyUp,
-      handleEdit,
       toggleEditing,
       removeTodoItem,
       toggleIsFavorite,
+      focusTextInput,
     ];
     return (
       <div className="App">
