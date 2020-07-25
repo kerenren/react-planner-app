@@ -21,7 +21,6 @@ class App extends React.Component {
     this.toggleIsFavorite = this.toggleIsFavorite.bind(this);
     this.toggleEditing = this.toggleEditing.bind(this);
     this.handleKeyUp = this.handleKeyUp.bind(this);
-    this.handleSort = this.handleSort.bind(this);
     this.onReset = this.onReset.bind(this);
     this.focusTextInput = () => {
       if (this.inputElement) this.inputElement.focus();
@@ -154,14 +153,15 @@ class App extends React.Component {
       />
     );
   };
+
   render() {
+    this.handleSort(this.state.taskList)
     const {
       handleToggle,
       removeTodoItem,
       toggleIsFavorite,
       toggleEditing,
       handleKeyUp,
-      handleSort,
       onReset,
       focusTextInput,
     } = this;
@@ -183,7 +183,6 @@ class App extends React.Component {
         />
         <Divider orientation="left">To Do List</Divider>
         <List bordered>
-          {handleSort(this.state.taskList)}
           {this.state.taskList.map((item) => {
             if (!item.finished) {
               if (item.isFavorite) {
